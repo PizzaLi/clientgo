@@ -6,7 +6,7 @@ First compile the application for Linux:
 
 Then package it to a docker image using the provided Dockerfile to run it on Kubernetes.
 
-If you are running a Minikube cluster, you can build this image directly on the Docker engine of the Minikube node without pushing it to a registry. To build the image on Minikube:
+If you are running a Minikube cluster, you can build this image directly on the Docker engine of the Minikube node without pushing it to a registry. To build the image on Minikube: 
 ```docker build -t in-cluster .```
 
 If you are not using Minikube, you should build this image and push it to a registry that your Kubernetes cluster can pull from.
