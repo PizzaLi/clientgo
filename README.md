@@ -24,3 +24,46 @@ Then, run the image in a Pod with a single instance Deployment:
 ```
 kubectl run --rm -i demo --image=in-cluster --image-pull-policy=IfNotPresent
 ```
+
+You should bind service account system:serviceaccount:default:default (which is the default account bound to Pod) with 
+role cluster-admin when it occurs problems like this:
+```
+GetK8sInfoFromIncluster err:[pods is forbidden: User "system:serviceaccount:default:default" cannot list resource "pods" in API group "" at the cluster scope]
+```
+
+Just create a yaml(with any name you like) with following contents:
+```
+# NOTE: The service account `default:default` already exists in k8s cluster.
+# You can create a new account following like this:
+#---
+#apiVersion: v1
+#kind: ServiceAccount
+#metadata:
+#  name: <new-account-name>
+#  namespace: <namespace>
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: clientgo
+subjects:
+  - kind: ServiceAccount
+    # Reference to upper's `metadata.name`
+    name: default
+    # Reference to upper's `metadata.namespace`
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Then, apply it by running the following command:
+```
+kubectl apply -f clientgo.yaml
+```
+
+If you wnat unbind them, just run:
+```
+kubectl delete -f clientgo.yaml
+```
