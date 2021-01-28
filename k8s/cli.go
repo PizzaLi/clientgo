@@ -184,7 +184,10 @@ func (k *KubeClient) WriteLogsIntoFile(namespace, podname, logpath string, num i
 	if err != nil {
 		return fmt.Errorf("error in copy information from podLogs to buf")
 	}
-	ioutil.WriteFile(logpath, buf.Bytes(), 0644)
+	err = ioutil.WriteFile(logpath, buf.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("err while write log to file[%s]", err.Error())
+	}
 	return nil
 }
 
